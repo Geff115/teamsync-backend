@@ -13,13 +13,12 @@ export const config: EventConfig = {
   type: 'event',
   description: 'Extract action items from meeting transcript using AI',
   subscribes: ['meeting.uploaded'],
-  emits: [],
-  virtualEmits: ['actions.extracted'],
+  emits: ['actions.extracted'],
   input: inputSchema,
   flows: ['meeting-processing'],
 };
 
-export const handler: Handlers['ExtractActions'] = async (input, { emit, logger, state }) => {
+export const handler = async (input: any, { emit, logger, state }: any) => {
   const { meetingId, title, transcript } = input;
 
   logger.info('Starting AI extraction for meeting', { meetingId, title });
@@ -49,7 +48,7 @@ export const handler: Handlers['ExtractActions'] = async (input, { emit, logger,
       return;
     }
 
-    // Emit event with extracted actions (will be handled by save-actions step)
+    // Emit event with extracted actions (will be handled by save-actions step on Day 2)
     await (emit as any)({
       topic: 'actions.extracted',
       data: {
@@ -67,7 +66,7 @@ export const handler: Handlers['ExtractActions'] = async (input, { emit, logger,
       stack: error.stack,
     });
 
-    // Update meeting with error status
+    // Update meeting with error status (optional: you could add an 'error' field to meeting schema)
     const meeting = await state.get('meetings', meetingId);
     if (meeting) {
       await state.set('meetings', meetingId, {

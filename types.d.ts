@@ -12,7 +12,9 @@ declare module 'motia' {
   }
 
   interface Handlers {
-    'ExtractActions': EventHandler<{ meetingId: string; title: string; transcript: string }, never>
+    'SendConfirmation': EventHandler<{ meetingId: string; title: string; actionIds: Array<string>; actionItems: Array<{ id: string; meetingId: string; description: string; assignee: string; dueDate: string | unknown; priority: 'low' | 'medium' | 'high'; status: 'pending' | 'in_progress' | 'done' | 'overdue'; createdAt: string; completedAt: string | unknown }>; actionsCount: number }, never>
+    'SaveActions': EventHandler<{ meetingId: string; title: string; extractedActions: Array<{ description: string; assignee: string; dueDate: string | unknown; priority: 'low' | 'medium' | 'high' }> }, { topic: 'actions.saved'; data: { meetingId: string; title: string; actionIds: Array<string>; actionItems: Array<{ id: string; meetingId: string; description: string; assignee: string; dueDate: string | unknown; priority: 'low' | 'medium' | 'high'; status: 'pending' | 'in_progress' | 'done' | 'overdue'; createdAt: string; completedAt: string | unknown }>; actionsCount: number } }>
+    'ExtractActions': EventHandler<{ meetingId: string; title: string; transcript: string }, { topic: 'actions.extracted'; data: { meetingId: string; title: string; extractedActions: Array<{ description: string; assignee: string; dueDate: string | unknown; priority: 'low' | 'medium' | 'high' }> } }>
     'UploadMeeting': ApiRouteHandler<{ title: string; transcript: string; uploadedBy?: string }, ApiResponse<201, { id: string; title: string; transcript: string; uploadedBy?: string; createdAt: string; processed: boolean }> | ApiResponse<400, { error?: string }>, { topic: 'meeting.uploaded'; data: { meetingId: string; title: string; transcript: string } }>
   }
     
