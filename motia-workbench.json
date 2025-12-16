@@ -17,5 +17,18 @@
         "sourceHandlePosition": "right"
       }
     }
+  },
+  {
+    "id": "meeting-processing",
+    "config": {
+      "src/events/extract-actions.step.ts": {
+        "x": 336,
+        "y": 24
+      },
+      "src/api/upload-meeting.step.ts": {
+        "x": 0,
+        "y": 0
+      }
+    }
   }
 ]

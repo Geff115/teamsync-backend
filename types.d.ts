@@ -12,9 +12,8 @@ declare module 'motia' {
   }
 
   interface Handlers {
-    'LogGreeting': EventHandler<{ requestId: string; greeting: string; processedBy: string }, never>
-    'HelloAPI': ApiRouteHandler<Record<string, unknown>, ApiResponse<200, { message: string; status: string; appName: string }>, { topic: 'process-greeting'; data: { timestamp: string; appName: string; greetingPrefix: string; requestId: string } }>
-    'ProcessGreeting': EventHandler<{ timestamp: string; appName: string; greetingPrefix: string; requestId: string }, { topic: 'greeting-processed'; data: { requestId: string; greeting: string; processedBy: string } }>
+    'ExtractActions': EventHandler<{ meetingId: string; title: string; transcript: string }, never>
+    'UploadMeeting': ApiRouteHandler<{ title: string; transcript: string; uploadedBy?: string }, ApiResponse<201, { id: string; title: string; transcript: string; uploadedBy?: string; createdAt: string; processed: boolean }> | ApiResponse<400, { error?: string }>, { topic: 'meeting.uploaded'; data: { meetingId: string; title: string; transcript: string } }>
   }
     
 }

@@ -4,7 +4,22 @@ import logsPlugin from '@motiadev/plugin-logs/plugin'
 import observabilityPlugin from '@motiadev/plugin-observability/plugin'
 import statesPlugin from '@motiadev/plugin-states/plugin'
 import bullmqPlugin from '@motiadev/plugin-bullmq/plugin'
+import cors from 'cors'
 
 export default defineConfig({
   plugins: [observabilityPlugin, statesPlugin, endpointPlugin, logsPlugin, bullmqPlugin],
+
+  // Enable CORS for frontend
+  app: (app) => {
+    app.use(cors({
+      origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+      credentials: true,
+    }))
+
+    // Health check endpoint
+    app.get('/health', (_req: any, res: any): void => {
+      res.json({ status: 'healthy', timestamp: new Date().toISOString() })
+    })
+  },
 })
+
