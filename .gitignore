@@ -6,5 +6,5 @@ venv
 .mermaid
 dist
 *.pyc
-.env.
+.env
 .env.production
