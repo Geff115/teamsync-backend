@@ -30,5 +30,18 @@
         "y": 0
       }
     }
+  },
+  {
+    "id": "reminder-system",
+    "config": {
+      "src/events/send-reminder.step.ts": {
+        "x": 338,
+        "y": 32
+      },
+      "src/cron/check-reminders.step.ts": {
+        "x": 0,
+        "y": 0
+      }
+    }
   }
 ]
