@@ -18,15 +18,22 @@ export const handler = async (req: any, { emit, logger, state }: any) => {
   logger.info('Manual reminder check triggered');
 
   try {
-    // Get all actions from state
-    const allActions = await state.getGroup('actions');
+    // Get action IDs from metadata
+    const actionIds = (await state.get('metadata', 'actionIds')) || [];
 
-    if (!allActions || allActions.length === 0) {
+    if (!actionIds || actionIds.length === 0) {
       return {
         status: 200,
         body: { message: 'No actions found' },
       };
     }
+
+    // Fetch all actions
+    const actions = await Promise.all(
+      actionIds.map((id: string) => state.get('actions', id))
+    );
+
+    const allActions = actions.filter(Boolean);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);

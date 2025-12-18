@@ -29,6 +29,9 @@ export const handler = async (input: any, { emit, logger, state }: any) => {
   const savedActionIds: string[] = [];
   const actionItems = [];
 
+  // Get existing action IDs list
+  const existingActionIds = (await state.get('metadata', 'actionIds')) || [];
+
   // Save each action to state
   for (const extracted of extractedActions) {
     const actionId = `action_${Date.now()}_${Math.random().toString(36).substring(7)}`;
@@ -56,6 +59,10 @@ export const handler = async (input: any, { emit, logger, state }: any) => {
       description: extracted.description.substring(0, 50) + '...'
     });
   }
+
+  // Update action IDs metadata
+  existingActionIds.push(...savedActionIds);
+  await state.set('metadata', 'actionIds', existingActionIds);
 
   // Update meeting as processed
   const meeting = await state.get('meetings', meetingId);

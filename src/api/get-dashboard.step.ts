@@ -19,42 +19,54 @@ export const handler = async (req: any, { logger, state }: any) => {
   logger.info('Fetching dashboard metrics');
 
   try {
-    // Get all meetings and actions
-    const allMeetings = await state.getGroup('meetings');
-    const allActions = await state.getGroup('actions');
+    // Get lists of IDs
+    const meetingIds = (await state.get('metadata', 'meetingIds')) || [];
+    const actionIds = (await state.get('metadata', 'actionIds')) || [];
+
+    // Fetch all meetings and actions
+    const meetings = await Promise.all(
+      meetingIds.map((id: string) => state.get('meetings', id))
+    );
+    const actions = await Promise.all(
+      actionIds.map((id: string) => state.get('actions', id))
+    );
+
+    // Filter out null values (deleted items)
+    const allMeetings = meetings.filter(Boolean);
+    const allActions = actions.filter(Boolean);
 
     // Calculate metrics
-    const totalMeetings = allMeetings?.length || 0;
+    const totalMeetings = allMeetings.length;
     
-    const activeActions = allActions?.filter((a: any) => 
+    const activeActions = allActions.filter((a: any) => 
       a.status === 'pending' || a.status === 'in_progress'
-    ).length || 0;
+    ).length;
 
-    const completedActions = allActions?.filter((a: any) => 
+    const completedActions = allActions.filter((a: any) => 
       a.status === 'done'
-    ).length || 0;
+    ).length;
 
-    const overdueActions = allActions?.filter((a: any) => 
+    const overdueActions = allActions.filter((a: any) => 
       a.status === 'overdue'
-    ).length || 0;
+    ).length;
 
-    const totalActions = allActions?.length || 0;
+    const totalActions = allActions.length;
     const completionRate = totalActions > 0 
       ? Math.round((completedActions / totalActions) * 100) 
       : 0;
 
     // Priority breakdown
-    const highPriority = allActions?.filter((a: any) => 
+    const highPriority = allActions.filter((a: any) => 
       a.priority === 'high' && a.status !== 'done'
-    ).length || 0;
+    ).length;
 
-    const mediumPriority = allActions?.filter((a: any) => 
+    const mediumPriority = allActions.filter((a: any) => 
       a.priority === 'medium' && a.status !== 'done'
-    ).length || 0;
+    ).length;
 
-    const lowPriority = allActions?.filter((a: any) => 
+    const lowPriority = allActions.filter((a: any) => 
       a.priority === 'low' && a.status !== 'done'
-    ).length || 0;
+    ).length;
 
     const metrics = {
       totalMeetings,

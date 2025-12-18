@@ -18,7 +18,7 @@ export const config: ApiRouteConfig = {
   middleware: [coreMiddleware],
 };
 
-export const handler: Handlers['UploadMeeting'] = async (req, { emit, logger, state }) => {
+export const handler = async (req: any, { emit, logger, state }: any) => {
   const { title, transcript, uploadedBy } = uploadMeetingSchema.parse(req.body);
 
   logger.info('Meeting upload started', { title, uploadedBy });
@@ -38,6 +38,11 @@ export const handler: Handlers['UploadMeeting'] = async (req, { emit, logger, st
 
   // Store meeting in Motia state
   await state.set('meetings', meetingId, meeting);
+
+  // Track meeting ID in metadata
+  const meetingIds = (await state.get('metadata', 'meetingIds')) || [];
+  meetingIds.push(meetingId);
+  await state.set('metadata', 'meetingIds', meetingIds);
 
   logger.info('Meeting stored in state', { meetingId, title });
 

@@ -30,12 +30,16 @@ export const handler = async (req: any, { logger, state }: any) => {
   logger.info('Fetching actions', { status, priority, assignee });
 
   try {
-    // Get all actions from state
-    let allActions = await state.getGroup('actions');
+    // Get action IDs from metadata
+    const actionIds = (await state.get('metadata', 'actionIds')) || [];
 
-    if (!allActions) {
-      allActions = [];
-    }
+    // Fetch all actions
+    const actions = await Promise.all(
+      actionIds.map((id: string) => state.get('actions', id))
+    );
+
+    // Filter out null values
+    let allActions = actions.filter(Boolean);
 
     // Apply filters
     let filteredActions = allActions;
