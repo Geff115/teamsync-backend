@@ -168,7 +168,7 @@ After processing 5+ meetings in production:
 - 🔄 **Real-time** dashboard updates
 - ⏰ **Daily reminders** running automatically
 
-## Link To FRontend Git Repository
+## Link To Frontend Git Repository
 
 **Frontend Repository**: [github.com/Geff115/teamsync-dashboard](https://www.github.com/Geff115/teamsync-dashboard)
 
